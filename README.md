@@ -324,10 +324,3 @@ For questions or issues:
 - Email: mishra.kshitij07@gmail.com
 - GitHub Issues: [Create an issue](https://github.com/Mishrakshitij/EDiSS/issues)
 
-## Future Work
-
-- Extend to cognitive and sensory disabilities
-- Multi-modal support (voice, visual)
-- Real-time adaptation based on user feedback
-- Integration with assistive technologies
-- Mobile application development
