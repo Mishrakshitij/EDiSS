@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDCare Dataset Access Request - EDiSS</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.95;
+        }
+        
+        .form-container {
+            padding: 40px 30px;
+        }
+        
+        .info-box {
+            background: #f8f9fa;
+            border-left: 4px solid #667eea;
+            padding: 15px;
+            margin-bottom: 30px;
+            border-radius: 5px;
+        }
+        
+        .info-box h3 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+        
+        .info-box ul {
+            margin-left: 20px;
+            margin-top: 10px;
+        }
+        
+        .info-box li {
+            margin-bottom: 5px;
+        }
+        
+        .form-group {
+            margin-bottom: 25px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #555;
+        }
+        
+        .form-group label .required {
+            color: #e74c3c;
+        }
+        
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 5px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .form-group textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        
+        .checkbox-group {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 20px;
+        }
+        
+        .checkbox-group input[type="checkbox"] {
+            width: auto;
+            margin-right: 10px;
+            margin-top: 5px;
+        }
+        
+        .checkbox-group label {
+            font-weight: normal;
+            flex: 1;
+        }
+        
+        .file-upload {
+            position: relative;
+            display: inline-block;
+            cursor: pointer;
+            width: 100%;
+        }
+        
+        .file-upload input[type="file"] {
+            position: absolute;
+            opacity: 0;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+        }
+        
+        .file-upload-label {
+            display: block;
+            padding: 12px;
+            background: #f8f9fa;
+            border: 2px dashed #667eea;
+            border-radius: 5px;
+            text-align: center;
+            color: #667eea;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+        
+        .file-upload:hover .file-upload-label {
+            background: #f0f0ff;
+        }
+        
+        .file-info {
+            margin-top: 8px;
+            font-size: 14px;
+            color: #666;
+        }
+        
+        .submit-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 40px;
+            border: none;
+            border-radius: 5px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
+        }
+        
+        .submit-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        
+        .terms-box {
+            background: #fff3cd;
+            border: 1px solid #ffc107;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        
+        .terms-box h4 {
+            color: #856404;
+            margin-bottom: 10px;
+        }
+        
+        .success-message {
+            display: none;
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        
+        .error-message {
+            display: none;
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>PDCare Dataset Access Request</h1>
+            <p>Request access to the Physical Disability Care dialogue dataset</p>
+        </div>
+        
+        <div class="form-container">
+            <div class="info-box">
+                <h3>📊 Dataset Information</h3>
+                <p><strong>PDCare Dataset</strong> contains 6,796 empathetic support dialogues for individuals with physical disabilities.</p>
+                <ul>
+                    <li>13 types of physical disabilities covered</li>
+                    <li>17 different support areas</li>
+                    <li>Annotated with politeness and empathy strategies</li>
+                    <li>User profiles with OCEAN personality traits, gender, and age</li>
+                </ul>
+            </div>
+            
+            <div class="success-message" id="successMessage">
+                ✅ Your request has been submitted successfully! We will review your application and send the dataset to your email within 2-3 business days.
+            </div>
+            
+            <div class="error-message" id="errorMessage">
+                ❌ There was an error submitting your request. Please try again or contact us directly.
+            </div>
+            
+            <form id="datasetRequestForm" action="https://formspree.io/f/YOUR_FORM_ID" method="POST" enctype="multipart/form-data">
+                <h3 style="margin-bottom: 20px; color: #667eea;">Researcher Information</h3>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="firstName">First Name <span class="required">*</span></label>
+                        <input type="text" id="firstName" name="firstName" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="lastName">Last Name <span class="required">*</span></label>
+                        <input type="text" id="lastName" name="lastName" required>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="email">Email Address <span class="required">*</span></label>
+                    <input type="email" id="email" name="email" required>
+                    <div class="file-info">We will send the dataset to this email address</div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="organization">Organization/Institution <span class="required">*</span></label>
+                    <input type="text" id="organization" name="organization" required>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="position">Position/Title <span class="required">*</span></label>
+                        <select id="position" name="position" required>
+                            <option value="">Select your position</option>
+                            <option value="professor">Professor</option>
+                            <option value="postdoc">Postdoctoral Researcher</option>
+                            <option value="phd">PhD Student</option>
+                            <option value="masters">Master's Student</option>
+                            <option value="researcher">Research Scientist</option>
+                            <option value="industry">Industry Researcher</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="country">Country <span class="required">*</span></label>
+                        <input type="text" id="country" name="country" required>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="profileUrl">Professional Profile URL</label>
+                    <input type="url" id="profileUrl" name="profileUrl" placeholder="LinkedIn, Google Scholar, or institutional page">
+                </div>
+                
+                <h3 style="margin: 30px 0 20px; color: #667eea;">Research Information</h3>
+                
+                <div class="form-group">
+                    <label for="researchPurpose">Research Purpose <span class="required">*</span></label>
+                    <textarea id="researchPurpose" name="researchPurpose" required 
+                              placeholder="Please describe your research objectives and how you plan to use the PDCare dataset"></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="projectTitle">Project/Paper Title</label>
+                    <input type="text" id="projectTitle" name="projectTitle" 
+                           placeholder="Title of your research project or paper">
+                </div>
+                
+                <div class="form-group">
+                    <label for="expectedOutcome">Expected Outcomes</label>
+                    <textarea id="expectedOutcome" name="expectedOutcome" 
+                              placeholder="Publications, thesis, commercial application, etc."></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="idUpload">Upload Institutional ID or Verification Document <span class="required">*</span></label>
+                    <div class="file-upload">
+                        <input type="file" id="idUpload" name="idUpload" accept=".pdf,.jpg,.jpeg,.png" required>
+                        <label for="idUpload" class="file-upload-label">
+                            Click to upload file (PDF, JPG, PNG - Max 5MB)
+                        </label>
+                    </div>
+                    <div class="file-info" id="fileInfo"></div>
+                </div>
+                
+                <div class="terms-box">
+                    <h4>📜 Terms and Conditions</h4>
+                    <ul style="margin-left: 20px; margin-top: 10px;">
+                        <li>The dataset is provided for research purposes only</li>
+                        <li>Commercial use requires explicit permission</li>
+                        <li>You must cite our paper in any publication using this dataset</li>
+                        <li>The dataset cannot be redistributed without permission</li>
+                        <li>You agree to use the data ethically and responsibly</li>
+                    </ul>
+                </div>
+                
+                <div class="checkbox-group">
+                    <input type="checkbox" id="agreeTerms" name="agreeTerms" required>
+                    <label for="agreeTerms">
+                        I agree to the terms and conditions and confirm that the information provided is accurate. 
+                        I understand that misuse of the dataset may result in revocation of access. <span class="required">*</span>
+                    </label>
+                </div>
+                
+                <div class="checkbox-group">
+                    <input type="checkbox" id="citationAgreement" name="citationAgreement" required>
+                    <label for="citationAgreement">
+                        I agree to cite the EDiSS paper (Mishra et al., AAAI 2025) in any publication that uses this dataset. <span class="required">*</span>
+                    </label>
+                </div>
+                
+                <button type="submit" class="submit-btn" id="submitBtn">Submit Access Request</button>
+            </form>
+            
+            <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #e0e0e0; text-align: center; color: #666;">
+                <p>For questions, contact: <a href="mailto:mishra.kshitij07@gmail.com" style="color: #667eea;">mishra.kshitij07@gmail.com</a></p>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // File upload handling
+        document.getElementById('idUpload').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            const fileInfo = document.getElementById('fileInfo');
+            
+            if (file) {
+                const fileSize = (file.size / 1024 / 1024).toFixed(2);
+                
+                if (fileSize > 5) {
+                    fileInfo.style.color = '#e74c3c';
+                    fileInfo.textContent = 'File size exceeds 5MB. Please choose a smaller file.';
+                    e.target.value = '';
+                } else {
+                    fileInfo.style.color = '#27ae60';
+                    fileInfo.textContent = `Selected: ${file.name} (${fileSize} MB)`;
+                }
+            }
+        });
+        
+        // Form submission
+        document.getElementById('datasetRequestForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const submitBtn = document.getElementById('submitBtn');
+            const successMsg = document.getElementById('successMessage');
+            const errorMsg = document.getElementById('errorMessage');
+            
+            // Disable submit button
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Submitting...';
+            
+            // Create FormData object
+            const formData = new FormData(this);
+            
+            // Here you would normally send the form data to your server
+            // For now, we'll simulate a successful submission
+            
+            // Replace this with actual form submission logic
+            // You can use services like Formspree, Netlify Forms, or your own backend
+            
+            setTimeout(() => {
+                // Simulate success
+                successMsg.style.display = 'block';
+                errorMsg.style.display = 'none';
+                this.reset();
+                document.getElementById('fileInfo').textContent = '';
+                
+                // Reset button
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Submit Access Request';
+                
+                // Scroll to success message
+                successMsg.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }, 1500);
+        });
+    </script>
+</body>
+</html>

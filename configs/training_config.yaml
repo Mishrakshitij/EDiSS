@@ -1,0 +1,116 @@
+# EDiSS Training Configuration
+
+# Dataset settings
+dataset:
+  name: "PDCare"
+  path: "data/pdcare"
+  num_dialogues: 6796
+  train_split: 0.8
+  val_split: 0.1
+  test_split: 0.1
+  max_dialogue_length: 30
+  min_dialogue_length: 12
+
+# Model settings
+model:
+  base_model: "microsoft/Phi-3-small-8k-instruct"
+  use_lora: true
+  lora_rank: 16
+  lora_alpha: 32
+  lora_dropout: 0.1
+  target_modules: ["q_proj", "k_proj", "v_proj", "o_proj"]
+  max_length: 2048
+  
+# Classifier settings
+classifiers:
+  roberta_model: "roberta-large"
+  pga_classes: 30  # 5 personas × 2 genders × 3 age groups
+  politeness_classes: 3
+  empathy_classes: 8
+  classifier_epochs: 10
+  classifier_lr: 2e-5
+  classifier_batch_size: 16
+
+# DSS warm-start training
+dss_training:
+  epochs: 5
+  batch_size: 4
+  learning_rate: 1e-5
+  gradient_accumulation_steps: 4
+  warmup_steps: 500
+  max_grad_norm: 1.0
+  save_steps: 1000
+  eval_steps: 500
+  
+# PPO training settings
+ppo_training:
+  epochs: 3
+  batch_size: 2
+  mini_batch_size: 1
+  ppo_epochs: 4
+  learning_rate: 1e-5
+  clip_epsilon: 0.2
+  value_loss_coef: 0.5
+  entropy_coef: 0.01
+  gamma: 0.99
+  gae_lambda: 0.95
+  kl_penalty: 0.01
+  target_kl: 0.05
+  max_grad_norm: 1.0
+
+# Reward weights
+reward_weights:
+  w1: 0.33  # User-profile alignment
+  w2: 0.33  # Politeness adherence  
+  w3: 0.34  # Empathy consistency
+  w4: 0.5   # Syntactic smoothness
+  w5: 0.5   # Semantic smoothness
+  gamma: 0.7  # Task-relevance vs smoothness
+  lambda: 2.0  # Scaling factor
+  alpha: 1.5  # Penalization factor
+
+# Evaluation settings
+evaluation:
+  num_samples: 100
+  metrics:
+    - user_profile_consistency
+    - politeness_strategy_accuracy
+    - empathy_strategy_accuracy
+    - perplexity
+    - response_length
+    - non_repetitiveness
+    - bleu
+    - rouge_l
+    - dialogue_coherence
+    - topic_consistency
+    - response_relevance
+
+# Generation settings
+generation:
+  max_new_tokens: 256
+  temperature: 0.7
+  top_p: 0.9
+  do_sample: true
+  num_beams: 1
+
+# Hardware settings
+hardware:
+  device: "cuda"  # or "cpu"
+  fp16: true
+  gradient_checkpointing: false
+  
+# Logging settings
+logging:
+  use_wandb: false
+  wandb_project: "EDiSS"
+  log_interval: 10
+  save_interval: 1000
+  eval_interval: 500
+  
+# Paths
+paths:
+  data_dir: "data/pdcare"
+  model_dir: "models"
+  checkpoint_dir: "checkpoints"
+  results_dir: "results"
+  log_dir: "logs"
