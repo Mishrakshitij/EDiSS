@@ -308,13 +308,8 @@ If you use EDiSS in your research, please cite:
 }
 ```
 
-## License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
 
 ## Acknowledgments
-
-- AAAI 2025 for accepting the paper
 - The disability support community for inspiration
 - Open-source contributors
 
